@@ -4,6 +4,7 @@
  */
 package co.za.obcodes.local_service_directory_api.controller;
 
+import co.za.obcodes.local_service_directory_api.exception.ResourceNotFoundException;
 import co.za.obcodes.local_service_directory_api.model.Category;
 import co.za.obcodes.local_service_directory_api.repository.CategoryRepository;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  *
@@ -36,9 +36,9 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        Optional<Category> category = categoryRepository.findById(id);
-        return category.map(ResponseEntity::ok)
-                       .orElse(ResponseEntity.notFound().build());
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
+        return ResponseEntity.ok(category);
     }
 
     @PostMapping
@@ -50,23 +50,18 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id,
                                                     @RequestBody Category categoryDetails) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
 
-        if (optionalCategory.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Category existingCategory = optionalCategory.get();
         existingCategory.setName(categoryDetails.getName());
         Category updatedCategory = categoryRepository.save(existingCategory);
-
         return ResponseEntity.ok(updatedCategory);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         if (!categoryRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Category not found with id " + id);
         }
 
         categoryRepository.deleteById(id);

@@ -1,8 +1,11 @@
+package co.za.obcodes.local_service_directory_api.controller;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+import co.za.obcodes.local_service_directory_api.exception.ResourceNotFoundException;
 import co.za.obcodes.local_service_directory_api.model.Service;
 import co.za.obcodes.local_service_directory_api.repository.CategoryRepository;
 import co.za.obcodes.local_service_directory_api.repository.ServiceRepository;
@@ -11,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  *
@@ -51,9 +53,9 @@ public class ServiceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Service> getServiceById(@PathVariable Long id) {
-        Optional<Service> service = serviceRepository.findById(id);
-        return service.map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+        Service service = serviceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id " + id));
+        return ResponseEntity.ok(service);
     }
 
     @PostMapping
@@ -75,13 +77,9 @@ public class ServiceController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateService(@PathVariable Long id,
                                             @RequestBody Service serviceDetails) {
-        Optional<Service> optionalService = serviceRepository.findById(id);
+        Service existingService = serviceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id " + id));
 
-        if (optionalService.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Service existingService = optionalService.get();
         existingService.setName(serviceDetails.getName());
         existingService.setDescription(serviceDetails.getDescription());
         existingService.setContactNumber(serviceDetails.getContactNumber());
@@ -103,7 +101,7 @@ public class ServiceController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteService(@PathVariable Long id) {
         if (!serviceRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Service not found with id " + id);
         }
 
         serviceRepository.deleteById(id);
