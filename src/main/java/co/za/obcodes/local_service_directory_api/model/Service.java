@@ -13,6 +13,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 /**
  *
@@ -26,21 +29,28 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
+    @NotBlank(message = "Service name is required")
+    @Size(max = 150, message = "Service name must be 150 characters or less")
     @Column(nullable = false, length = 150)
     private String name;
     
+    @Size(max = 500, message = "Description must be 500 characters or less")
     @Column(length = 500)
     private String description;
     
+    @Size(max = 20, message = "Contact number must be 20 characters or less")
     @Column(name = "contact_number", length = 20)
     private String contactNumber;
     
+    @Size(max = 300, message = "Address must be 300 characters or less")
     @Column(length = 300)
     private String address;
     
+    @Size(max = 200, message = "Operating hours must be 200 characters or less")
     @Column(name = "operating_hours", length = 200)
     private String operatingHours;
     
+    @NotNull(message = "Category is required")
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

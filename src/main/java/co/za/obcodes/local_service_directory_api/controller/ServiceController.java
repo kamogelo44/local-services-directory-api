@@ -12,6 +12,7 @@ import co.za.obcodes.local_service_directory_api.repository.ServiceRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class ServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createService(@RequestBody Service service) {
+    public ResponseEntity<?> createService(@Valid @RequestBody Service service) {
         if (service.getCategory() == null || service.getCategory().getId() == null) {
             return ResponseEntity.badRequest()
                     .body("Category ID is required");
@@ -76,7 +77,7 @@ public class ServiceController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateService(@PathVariable Long id,
-                                            @RequestBody Service serviceDetails) {
+                                           @Valid @RequestBody Service serviceDetails) {
         Service existingService = serviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found with id " + id));
 
