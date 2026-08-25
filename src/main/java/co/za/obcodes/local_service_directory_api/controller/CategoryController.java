@@ -4,13 +4,12 @@
  */
 package co.za.obcodes.local_service_directory_api.controller;
 
-import co.za.obcodes.local_service_directory_api.exception.ResourceNotFoundException;
 import co.za.obcodes.local_service_directory_api.model.Category;
-import co.za.obcodes.local_service_directory_api.repository.CategoryRepository;
+import co.za.obcodes.local_service_directory_api.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -23,49 +22,38 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        return ResponseEntity.ok(categories);
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
-        return ResponseEntity.ok(category);
+        return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     @PostMapping
     public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
-        Category savedCategory = categoryRepository.save(category);
+        Category savedCategory = categoryService.createCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id,
                                                     @Valid @RequestBody Category categoryDetails) {
-        Category existingCategory = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
-
-        existingCategory.setName(categoryDetails.getName());
-        Category updatedCategory = categoryRepository.save(existingCategory);
+        Category updatedCategory = categoryService.updateCategory(id, categoryDetails);
         return ResponseEntity.ok(updatedCategory);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        if (!categoryRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Category not found with id " + id);
-        }
-
-        categoryRepository.deleteById(id);
+        categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
 }
