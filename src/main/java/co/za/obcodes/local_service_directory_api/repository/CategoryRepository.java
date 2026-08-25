@@ -7,6 +7,7 @@ package co.za.obcodes.local_service_directory_api.repository;
 import co.za.obcodes.local_service_directory_api.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 /**
  *
  * @author Obakeng Phale
