@@ -4,11 +4,14 @@
  */
 package co.za.obcodes.local_service_directory_api.service;
 
+import co.za.obcodes.local_service_directory_api.dto.CategoryDTO;
 import co.za.obcodes.local_service_directory_api.exception.ResourceNotFoundException;
 import co.za.obcodes.local_service_directory_api.model.Category;
 import co.za.obcodes.local_service_directory_api.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.stream.Collectors;        
 
 /**
  *
@@ -26,27 +29,39 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryDTO> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Category getCategoryById(Long id) {
-        return categoryRepository.findById(id)
+    public CategoryDTO getCategoryById(Long id) {
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
+        return toDTO(category);
     }
 
-    public Category createCategory(Category category) {
-        return categoryRepository.save(category);
+    public CategoryDTO createCategory(Category category) {
+        Category savedCategory = categoryRepository.save(category);
+        return toDTO(savedCategory);
     }
 
-    public Category updateCategory(Long id, Category categoryDetails) {
-        Category existingCategory = getCategoryById(id);
+    public CategoryDTO updateCategory(Long id, Category categoryDetails) {
+        Category existingCategory = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
         existingCategory.setName(categoryDetails.getName());
-        return categoryRepository.save(existingCategory);
+        Category updatedCategory = categoryRepository.save(existingCategory);
+        return toDTO(updatedCategory);
     }
 
     public void deleteCategory(Long id) {
-        Category category = getCategoryById(id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
         categoryRepository.delete(category);
+    }
+
+    private CategoryDTO toDTO(Category category) {
+        return new CategoryDTO(category.getId(), category.getName());
     }
 }

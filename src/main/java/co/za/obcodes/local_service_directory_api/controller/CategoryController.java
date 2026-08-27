@@ -4,6 +4,7 @@
  */
 package co.za.obcodes.local_service_directory_api.controller;
 
+import co.za.obcodes.local_service_directory_api.dto.CategoryDTO;
 import co.za.obcodes.local_service_directory_api.model.Category;
 import co.za.obcodes.local_service_directory_api.service.CategoryService;
 import jakarta.validation.Valid;
@@ -29,25 +30,25 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
-        Category savedCategory = categoryService.createCategory(category);
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody Category category) {
+        CategoryDTO savedCategory = categoryService.createCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id,
-                                                    @Valid @RequestBody Category categoryDetails) {
-        Category updatedCategory = categoryService.updateCategory(id, categoryDetails);
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long id,
+                                                       @Valid @RequestBody Category categoryDetails) {
+        CategoryDTO updatedCategory = categoryService.updateCategory(id, categoryDetails);
         return ResponseEntity.ok(updatedCategory);
     }
 
