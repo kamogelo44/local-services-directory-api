@@ -9,11 +9,13 @@ import co.za.obcodes.local_service_directory_api.dto.ServiceDTO;
 import co.za.obcodes.local_service_directory_api.model.Service;
 import co.za.obcodes.local_service_directory_api.service.ServiceService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  *
@@ -31,10 +33,21 @@ public class ServiceController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ServiceDTO>> getAllServices(
+    public ResponseEntity<Page<ServiceDTO>> getAllServices(
             @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) String search) {
-        return ResponseEntity.ok(serviceService.getAllServices(categoryId, search));
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+
+        Sort sort = sortDirection.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return ResponseEntity.ok(serviceService.getAllServices(categoryId, search, pageable));
     }
 
     @GetMapping("/{id}")

@@ -8,10 +8,9 @@ import co.za.obcodes.local_service_directory_api.dto.CategoryDTO;
 import co.za.obcodes.local_service_directory_api.exception.ResourceNotFoundException;
 import co.za.obcodes.local_service_directory_api.model.Category;
 import co.za.obcodes.local_service_directory_api.repository.CategoryRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;        
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;        
 
 /**
  *
@@ -29,11 +28,9 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<CategoryDTO> getAllCategories() {
-        return categoryRepository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public Page<CategoryDTO> getAllCategories(Pageable pageable) {
+        return categoryRepository.findAll(pageable)
+                .map(this::toDTO);
     }
 
     public CategoryDTO getCategoryById(Long id) {

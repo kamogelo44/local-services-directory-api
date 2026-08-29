@@ -10,6 +10,8 @@ import co.za.obcodes.local_service_directory_api.model.Category;
 import co.za.obcodes.local_service_directory_api.model.Service;
 import co.za.obcodes.local_service_directory_api.repository.CategoryRepository;
 import co.za.obcodes.local_service_directory_api.repository.ServiceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,20 +33,18 @@ public class ServiceService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<ServiceDTO> getAllServices(Long categoryId, String search) {
-        List<Service> services;
+    public Page<ServiceDTO> getAllServices(Long categoryId, String search, Pageable pageable) {
+        Page<Service> services;
 
         if (categoryId != null) {
-            services = serviceRepository.findByCategoryId(categoryId);
+            services = serviceRepository.findByCategoryId(categoryId, pageable);
         } else if (search != null && !search.isBlank()) {
-            services = serviceRepository.findByNameContainingIgnoreCase(search);
+            services = serviceRepository.findByNameContainingIgnoreCase(search, pageable);
         } else {
-            services = serviceRepository.findAll();
+            services = serviceRepository.findAll(pageable);
         }
 
-        return services.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        return services.map(this::toDTO);
     }
 
     public ServiceDTO getServiceById(Long id) {
