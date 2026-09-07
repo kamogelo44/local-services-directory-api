@@ -1,4 +1,4 @@
-<img width="1426" height="912" alt="image" src="https://github.com/user-attachments/assets/b4060b54-82c2-4948-b474-3da1be293d99" /># Local Services Directory API
+# Local Services Directory API
 
 A REST API for discovering local services — clinics, taxi ranks, government offices, libraries, and police stations — in the Soweto area. Built with Spring Boot as a portfolio project demonstrating production-ready API development.
 
