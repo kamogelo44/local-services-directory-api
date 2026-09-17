@@ -71,6 +71,8 @@ A REST API for discovering local services — clinics, taxi ranks, government of
 
    http://localhost:8080/swagger-ui/index.html
 
+   <img width="678" height="2185" alt="Swagger UI" src="https://github.com/user-attachments/assets/2514a09c-9e34-4881-aea3-2ff68abb0123" />
+
 ### Docker Setup
 
 1. Build and run both the app and MySQL:
@@ -152,6 +154,8 @@ Authorization: Bearer YOUR_TOKEN_HERE
 ### Example: Get services
 
 GET http://localhost:8080/api/services
+
+<img width="1426" height="912" alt="Postman Response" src="https://github.com/user-attachments/assets/d6b6e167-a16f-44ea-9600-ff086d966519" />
 
 ## Example Request
 
@@ -251,6 +255,8 @@ Current test coverage:
 | ServiceServiceTest | 5 | CRUD operations, category validation, exception handling |
 
 Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+
+<img width="646" height="541" alt="Test Results" src="https://github.com/user-attachments/assets/1e8767aa-0b14-46ae-9690-6f6a0318770a" />
 
 ## Deployment
 
