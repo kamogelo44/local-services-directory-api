@@ -20,7 +20,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "ThisIsASecretKeyForJwtTokenGenerationThatIsAtLeast32BytesLong";
+    private final String SECRET = "ThisIsASecretKeyForJwtTokenGenerationThatIsAtLeastThirtyTwoBytesLongForHS256Algorithm1234567890";
     private final long EXPIRATION_MS = 86400000; // 24 hours
 
     private SecretKey getSigningKey() {
